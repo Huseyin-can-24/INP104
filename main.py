@@ -1,2 +1,3 @@
-a=str(input("yazı yaz"))
-print(len(a))
+a=str(input("isim"))
+b=str(input("soyad"))
+print(a[0]+"."+b[0])
