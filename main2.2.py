@@ -1,0 +1,1 @@
+x1=int(input("x1"))y1=int(input("y1"))tuple=(x1, y1)print(tuple)if x1>y1:  P1=x1-y1elif y1>x1:  P1=y1-x1print(P1)
