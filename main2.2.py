@@ -1,1 +1,1 @@
-x1=int(input("x1"))y1=int(input("y1"))tuple=(x1, y1)print(tuple)if x1>y1:  P1=x1-y1elif y1>x1:  P1=y1-x1print(P1)
+x1=int(input("x1"))y1=int(input("y1"))p1=(x1,y1)x2=int(input("x2"))y2=int(input("y2"))p2=(x2,y2)tuple=(p1, p2)print(tuple)d=(((p1[0] - p2[0]) ** 2) + ((p1[1] - p2[1]) ** 2))**0.5print(d)
