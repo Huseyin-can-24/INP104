@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yazdığım Reçeteler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Yazdığınız Reçeteler</h2>
+
+    {% if prescriptions %}
+        <ul>
+        {% for p in prescriptions %}
+            <li>
+                <strong>{{ p.issue_date.strftime('%Y-%m-%d') }}</strong> - Randevu ID: {{ p.appointment_id }}<br>
+                <strong>İlaçlar:</strong> {{ p.medications }}<br>
+                <strong>Talimatlar:</strong> {{ p.instructions }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Henüz reçete yazılmamış.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('doctor.dashboard') }}">← Geri Dön</a></p>
+</body>
+</html>

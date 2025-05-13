@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Doktor Paneli</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Doktor Paneli</h2>
+
+    <p>Hoş geldiniz, {{ current_user.username }}!</p>
+
+    <ul>
+        <li><a href="{{ url_for('auth.logout') }}">Çıkış Yap</a></li>
+    </ul>
+
+    <h3>Bekleyen Randevular</h3>
+    {% if pending_appointments %}
+        <ul>
+            {% for app in pending_appointments %}
+                <li>{{ app.date_time }} - {{ app.reason }} (Hasta ID: {{ app.patient_id }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Bekleyen randevu yok.</p>
+    {% endif %}
+
+    <h3>Onaylı Randevular</h3>
+    {% if confirmed_appointments %}
+        <ul>
+            {% for app in confirmed_appointments %}
+                <li>{{ app.date_time }} - {{ app.reason }} (Hasta ID: {{ app.patient_id }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Onaylı randevu yok.</p>
+    {% endif %}
+</body>
+</html>

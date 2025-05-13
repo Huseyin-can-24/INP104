@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Reçete Yaz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Reçete Yaz</h2>
+    <p><strong>Randevu:</strong> {{ appointment.date_time }} - {{ appointment.reason }}</p>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.medications.label }}<br>
+            {{ form.medications(rows=3) }}
+        </p>
+
+        <p>
+            {{ form.instructions.label }}<br>
+            {{ form.instructions(rows=3) }}
+        </p>
+
+        <p>{{ form.submit() }}</p>
+    </form>
+
+    <p><a href="{{ url_for('doctor.dashboard') }}">← Geri Dön</a></p>
+</body>
+</html>

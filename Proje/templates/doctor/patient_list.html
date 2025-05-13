@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hastalar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Hastalarım</h2>
+
+    {% if patients %}
+        <ul>
+        {% for p in patients %}
+            <li>
+                {{ p.full_name or ('Hasta #' + p.id|string) }}
+                — <a href="{{ url_for('doctor.patient_detail', patient_id=p.id) }}">Detay</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Henüz hiçbir hastayla randevunuz yok.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('doctor.dashboard') }}">← Geri Dön</a></p>
+</body>
+</html>

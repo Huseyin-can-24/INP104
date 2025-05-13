@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Semptom Değerlendirmesi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Semptom Değerlendirme</h2>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.fever.label }} {{ form.fever() }}
+        </p>
+
+        <p>
+            {{ form.fever_temperature.label }}<br>
+            {{ form.fever_temperature() }}
+        </p>
+
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=3) }}
+        </p>
+
+        <p>{{ form.submit() }}</p>
+    </form>
+
+    <p><a href="{{ url_for('patient.dashboard') }}">← Geri Dön</a></p>
+</body>
+</html>

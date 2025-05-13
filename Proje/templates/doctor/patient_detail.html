@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ patient.full_name or 'Hasta Detayı' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Hasta: {{ patient.full_name or '—' }}</h2>
+
+    <h3>Semptom Geçmişi</h3>
+    {% if symptoms %}
+        <ul>
+        {% for s in symptoms %}
+            <li>
+                <strong>{{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</strong><br>
+                Ateş: {{ 'Var' if s.fever else 'Yok' }}{% if s.fever and s.fever_temperature %} ({{ s.fever_temperature }}°C){% endif %}<br>
+                Açıklama: {{ s.description }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Semptom bilgisi bulunmuyor.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('doctor.patients') }}">← Hastalar Listesi</a></p>
+</body>
+</html>

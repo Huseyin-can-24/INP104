@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hasta Paneli</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Hasta Paneli</h2>
+    
+    <p>Hoş geldiniz, {{ current_user.username }}!</p>
+
+    <ul>
+        <li><a href="{{ url_for('patient.create_appointment') }}">Yeni Randevu Oluştur</a></li>
+        <li><a href="{{ url_for('patient.symptom_form') }}">Semptom Değerlendirmesi</a></li>
+        <li><a href="{{ url_for('patient.medical_history') }}">Geçmiş Hastalıklar</a></li>
+        <li><a href="{{ url_for('auth.logout') }}">Çıkış Yap</a></li>
+    </ul>
+
+    <h3>Randevularınız</h3>
+    {% if appointments %}
+        <ul>
+            {% for app in appointments %}
+                <li>{{ app.date_time }} - {{ app.reason }} (Durum: {{ app.status }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Henüz randevunuz yok.</p>
+    {% endif %}
+</body>
+</html>
