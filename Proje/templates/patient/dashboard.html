@@ -2,30 +2,57 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hasta Paneli</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
-    <h2>Hasta Paneli</h2>
-    
-    <p>Hoş geldiniz, {{ current_user.username }}!</p>
+    <div class="container">
+        <header class="dashboard-header">
+            <h2>Hasta Paneli</h2>
+            <div class="user-info">
+                <span>Hoş geldiniz, {{ current_user.username }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="logout-btn">Çıkış Yap</a>
+            </div>
+        </header>
 
-    <ul>
-        <li><a href="{{ url_for('patient.create_appointment') }}">Yeni Randevu Oluştur</a></li>
-        <li><a href="{{ url_for('patient.symptom_form') }}">Semptom Değerlendirmesi</a></li>
-        <li><a href="{{ url_for('patient.medical_history') }}">Geçmiş Hastalıklar</a></li>
-        <li><a href="{{ url_for('auth.logout') }}">Çıkış Yap</a></li>
-    </ul>
+        <nav class="patient-nav">
+            <a href="{{ url_for('patient.create_appointment') }}" class="nav-btn">Yeni Randevu Oluştur</a>
+            <a href="{{ url_for('patient.symptom_form') }}" class="nav-btn">Semptom Değerlendirmesi</a>
+            <a href="{{ url_for('patient.medical_history') }}" class="nav-btn">Geçmiş Hastalıklar</a>
+        </nav>
 
-    <h3>Randevularınız</h3>
-    {% if appointments %}
-        <ul>
-            {% for app in appointments %}
-                <li>{{ app.date_time }} - {{ app.reason }} (Durum: {{ app.status }})</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Henüz randevunuz yok.</p>
-    {% endif %}
+        <div class="appointments-section">
+            <h3>Randevularınız</h3>
+            {% if appointments %}
+                {% for app in appointments %}
+                    <div class="appointment-card {{ app.status }}">
+                        <div class="appointment-info">
+                            <p class="date">{{ app.date_time.strftime('%d.%m.%Y %H:%M') }}</p>
+                            <p class="doctor-name">Doktor: Dr. {{ app.doctor.user.username }}</p>
+                            <p class="reason">Sebep: {{ app.reason }}</p>
+                            <p class="status">
+                                Durum: 
+                                {% if app.status == 'pending' %}
+                                    <span class="status-badge pending">Doktor Onayı Bekleniyor</span>
+                                {% elif app.status == 'confirmed' %}
+                                    <span class="status-badge confirmed">Onaylandı</span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="status-badge rejected">Reddedildi</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if app.status == 'confirmed' and app.prescription %}
+                            <div class="prescription-section">
+                                <a href="{{ url_for('patient.view_prescription', appointment_id=app.id) }}" class="btn view-prescription">Reçeteyi Görüntüle</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-appointments">Henüz randevunuz bulunmamaktadır.</p>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>

@@ -2,33 +2,66 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yeni Randevu Oluştur</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_appointment.css') }}">
 </head>
 <body>
-    <h2>Yeni Randevu Oluştur</h2>
+    <div class="container">
+        <div class="appointment-form">
+            <h2>Yeni Randevu Oluştur</h2>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+            <form method="POST">
+                {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.doctor.label }}<br>
-            {{ form.doctor() }}
-        </p>
+                <div class="form-group">
+                    {{ form.doctor.label }}
+                    {{ form.doctor(class="form-control") }}
+                    {% if form.doctor.errors %}
+                        {% for error in form.doctor.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-        <p>
-            {{ form.date_time.label }}<br>
-            {{ form.date_time() }}
-        </p>
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form.date.label }}
+                        {{ form.date(class="form-control") }}
+                        {% if form.date.errors %}
+                            {% for error in form.date.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
 
-        <p>
-            {{ form.reason.label }}<br>
-            {{ form.reason(rows=3) }}
-        </p>
+                    <div class="form-group">
+                        {{ form.time.label }}
+                        {{ form.time(class="form-control") }}
+                        {% if form.time.errors %}
+                            {% for error in form.time.errors %}
+                                <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
 
-        <p>{{ form.submit() }}</p>
-    </form>
+                <div class="form-group">
+                    {{ form.reason.label }}
+                    {{ form.reason(class="form-control") }}
+                    {% if form.reason.errors %}
+                        {% for error in form.reason.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-    <p><a href="{{ url_for('patient.dashboard') }}">← Geri Dön</a></p>
+                <div class="form-actions">
+                    {{ form.submit(class="submit-btn") }}
+                    <a href="{{ url_for('patient.dashboard') }}" class="back-btn">← Geri Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'gizli_anahtar'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///randevu.db'
+    SECRET_KEY = 'your-secret-key-here'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///hospital.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

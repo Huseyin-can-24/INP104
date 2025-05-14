@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçete Görüntüle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/prescription.css') }}">
+    <style>
+        .prescription-view {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .prescription-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .prescription-info {
+            margin-bottom: 30px;
+        }
+
+        .prescription-info p {
+            margin: 8px 0;
+            color: #495057;
+        }
+
+        .prescription-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .prescription-section {
+            margin-bottom: 20px;
+        }
+
+        .prescription-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .prescription-section p {
+            white-space: pre-line;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .doctor-info {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="prescription-view">
+            <div class="prescription-header">
+                <h2>Reçete Detayları</h2>
+            </div>
+
+            <div class="prescription-info">
+                <p><strong>Hasta:</strong> {{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</p>
+                <p><strong>Randevu Tarihi:</strong> {{ appointment.date_time.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p><strong>Reçete Tarihi:</strong> {{ appointment.prescription.issue_date.strftime('%d.%m.%Y') }}</p>
+            </div>
+
+            {% if appointment.prescription %}
+                <div class="prescription-content">
+                    <div class="prescription-section">
+                        <h3>İlaçlar</h3>
+                        <p>{{ appointment.prescription.medications }}</p>
+                    </div>
+
+                    <div class="prescription-section">
+                        <h3>Kullanım Talimatları</h3>
+                        <p>{{ appointment.prescription.instructions }}</p>
+                    </div>
+                </div>
+
+                <div class="doctor-info">
+                    <p><strong>Yazan Doktor:</strong></p>
+                    <p>Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}</p>
+                    {% if appointment.doctor.specialization %}
+                        <p>{{ appointment.doctor.specialization }}</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="no-prescription">
+                    <p>Bu randevu için henüz reçete yazılmamış.</p>
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <a href="{{ url_for('patient.dashboard') }}" class="back-btn">← Geri Dön</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

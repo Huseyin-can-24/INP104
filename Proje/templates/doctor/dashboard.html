@@ -2,38 +2,70 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doktor Paneli</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
-    <h2>Doktor Paneli</h2>
+    <div class="container">
+        <header class="dashboard-header">
+            <h2>Doktor Paneli</h2>
+            <div class="user-info">
+                <span>Hoş geldiniz, Dr. {{ current_user.username }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="logout-btn">Çıkış Yap</a>
+            </div>
+        </header>
 
-    <p>Hoş geldiniz, {{ current_user.username }}!</p>
+        <div class="appointments-section">
+            <div class="pending-appointments">
+                <h3>Bekleyen Randevular</h3>
+                {% if pending_appointments %}
+                    {% for app in pending_appointments %}
+                        <div class="appointment-card pending">
+                            <div class="appointment-info">
+                                <p class="date">{{ app.date_time.strftime('%d.%m.%Y %H:%M') }}</p>
+                                <p class="patient-name">Hasta: {{ app.patient.user.username }}</p>
+                                <p class="reason">Sebep: {{ app.reason }}</p>
+                            </div>
+                            <div class="appointment-actions">
+                                <form method="POST" action="{{ url_for('doctor.handle_appointment', appointment_id=app.id, action='accept') }}">
+                                    <button type="submit" class="btn accept">Onayla</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('doctor.handle_appointment', appointment_id=app.id, action='reject') }}">
+                                    <button type="submit" class="btn reject">Reddet</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-appointments">Bekleyen randevu bulunmamaktadır.</p>
+                {% endif %}
+            </div>
 
-    <ul>
-        <li><a href="{{ url_for('auth.logout') }}">Çıkış Yap</a></li>
-    </ul>
-
-    <h3>Bekleyen Randevular</h3>
-    {% if pending_appointments %}
-        <ul>
-            {% for app in pending_appointments %}
-                <li>{{ app.date_time }} - {{ app.reason }} (Hasta ID: {{ app.patient_id }})</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Bekleyen randevu yok.</p>
-    {% endif %}
-
-    <h3>Onaylı Randevular</h3>
-    {% if confirmed_appointments %}
-        <ul>
-            {% for app in confirmed_appointments %}
-                <li>{{ app.date_time }} - {{ app.reason }} (Hasta ID: {{ app.patient_id }})</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Onaylı randevu yok.</p>
-    {% endif %}
+            <div class="confirmed-appointments">
+                <h3>Onaylı Randevular</h3>
+                {% if confirmed_appointments %}
+                    {% for app in confirmed_appointments %}
+                        <div class="appointment-card confirmed">
+                            <div class="appointment-info">
+                                <p class="date">{{ app.date_time.strftime('%d.%m.%Y %H:%M') }}</p>
+                                <p class="patient-name">Hasta: {{ app.patient.user.username }}</p>
+                                <p class="reason">Sebep: {{ app.reason }}</p>
+                            </div>
+                            <div class="prescription-section">
+                                {% if not app.prescription %}
+                                    <a href="{{ url_for('doctor.write_prescription', appointment_id=app.id) }}" class="btn write-prescription">Reçete Yaz</a>
+                                {% else %}
+                                    <span class="prescription-written">Reçete Yazıldı</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-appointments">Onaylı randevu bulunmamaktadır.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>

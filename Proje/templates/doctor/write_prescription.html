@@ -2,29 +2,48 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reçete Yaz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/prescription.css') }}">
 </head>
 <body>
-    <h2>Reçete Yaz</h2>
-    <p><strong>Randevu:</strong> {{ appointment.date_time }} - {{ appointment.reason }}</p>
+    <div class="container">
+        <div class="prescription-form">
+            <h2>Reçete Yaz</h2>
+            <div class="appointment-info">
+                <p>Hasta: {{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</p>
+                <p>Tarih: {{ appointment.date_time.strftime('%d.%m.%Y %H:%M') }}</p>
+            </div>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+            <form method="POST">
+                {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.medications.label }}<br>
-            {{ form.medications(rows=3) }}
-        </p>
+                <div class="form-group">
+                    {{ form.medications.label }}
+                    {{ form.medications(class="form-control", rows=5, placeholder="İlaç adı, dozu ve kullanım sıklığı") }}
+                    {% if form.medications.errors %}
+                        {% for error in form.medications.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-        <p>
-            {{ form.instructions.label }}<br>
-            {{ form.instructions(rows=3) }}
-        </p>
+                <div class="form-group">
+                    {{ form.instructions.label }}
+                    {{ form.instructions(class="form-control", rows=5, placeholder="Özel kullanım talimatları ve öneriler") }}
+                    {% if form.instructions.errors %}
+                        {% for error in form.instructions.errors %}
+                            <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-        <p>{{ form.submit() }}</p>
-    </form>
-
-    <p><a href="{{ url_for('doctor.dashboard') }}">← Geri Dön</a></p>
+                <div class="form-actions">
+                    {{ form.submit(class="submit-btn") }}
+                    <a href="{{ url_for('doctor.dashboard') }}" class="back-btn">← Geri Dön</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

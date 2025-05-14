@@ -1,11 +1,9 @@
-
+from models import db, User, Patient, Appointment, Doctor, Symptom
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from models import Patient, Appointment
-from flask import  redirect, url_for, flash
-from models import Doctor
-from forms import AppointmentForm
-from datetime import datetime
+from flask import redirect, url_for, flash
+from forms import AppointmentForm, SymptomForm
+from datetime import datetime, time, date
 
 patient_bp = Blueprint('patient', __name__)
 
@@ -19,33 +17,52 @@ def dashboard():
 @patient_bp.route('/medical_history')
 @login_required
 def medical_history():
-    return render_template('patient/medical_history.html')
-
+    patient = Patient.query.filter_by(user_id=current_user.id).first()
+    symptoms = Symptom.query.filter_by(patient_id=patient.id).order_by(Symptom.created_at.desc()).all()
+    return render_template('patient/medical_history.html', symptoms=symptoms)
 
 @patient_bp.route('/create_appointment', methods=['GET', 'POST'])
 @login_required
 def create_appointment():
     patient = Patient.query.filter_by(user_id=current_user.id).first()
     form = AppointmentForm()
-    form.doctor.choices = [(d.id, d.full_name) for d in Doctor.query.all()]
+    
+    # Doktor seçeneklerini güncelle
+    doctors = Doctor.query.join(User).all()
+    form.doctor.choices = [(d.id, f"Dr. {d.user.first_name} {d.user.last_name}") for d in doctors]
 
     if form.validate_on_submit():
+        # Tarih ve saati birleştir
+        appointment_datetime = datetime.combine(form.date.data, form.time.data)
+        
         new_appointment = Appointment(
             patient_id=patient.id,
             doctor_id=form.doctor.data,
-            date_time=form.date_time.data,
+            date_time=appointment_datetime,
             reason=form.reason.data,
             status='pending'
         )
         db.session.add(new_appointment)
         db.session.commit()
-        flash('Randevu oluşturuldu! Onay bekleniyor.')
+        flash('Randevu oluşturuldu! Doktor onayı bekleniyor.', 'info')
         return redirect(url_for('patient.dashboard'))
 
     return render_template('patient/create_appointment.html', form=form)
 
-from models import Symptom
-from forms import SymptomForm
+@patient_bp.route('/view_prescription/<int:appointment_id>')
+@login_required
+def view_prescription(appointment_id):
+    patient = Patient.query.filter_by(user_id=current_user.id).first()
+    # Appointment ve ilişkili verileri tek sorguda çekelim
+    appointment = Appointment.query.join(Doctor).join(User, Doctor.user_id == User.id)\
+        .filter(Appointment.id == appointment_id)\
+        .first_or_404()
+    
+    if appointment.patient_id != patient.id:
+        flash('Bu reçeteyi görüntüleme yetkiniz yok!', 'error')
+        return redirect(url_for('patient.dashboard'))
+    
+    return render_template('patient/view_prescription.html', appointment=appointment)
 
 @patient_bp.route('/symptom_form', methods=['GET', 'POST'])
 @login_required
@@ -67,5 +84,3 @@ def symptom_form():
         return redirect(url_for('patient.dashboard'))
 
     return render_template('patient/symptom_form.html', form=form)
-
-

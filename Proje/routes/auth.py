@@ -14,13 +14,18 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
+        if user is None:
+            flash('Kullanıcı bulunamadı')
+            return render_template('auth/login.html', form=form)
+        elif not user.check_password(form.password.data):
+            flash('Yanlış şifre girdiniz')
+            return render_template('auth/login.html', form=form)
+        else:
             login_user(user)
             next_page = request.args.get('next')
             if not next_page or not next_page.startswith('/'):
                 next_page = url_for('patient.dashboard') if user.role == 'patient' else url_for('doctor.dashboard')
             return redirect(next_page)
-        flash('Geçersiz kullanıcı adı veya şifre')
     return render_template('auth/login.html', form=form)
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -30,7 +35,12 @@ def register():
 
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, role=form.role.data)
+        user = User(
+            username=form.username.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            role=form.role.data
+        )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()

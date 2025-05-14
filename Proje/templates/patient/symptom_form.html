@@ -2,32 +2,46 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semptom Değerlendirmesi</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/symptom_form.css') }}">
 </head>
 <body>
-    <h2>Semptom Değerlendirme</h2>
+    <div class="container">
+        <h2>Semptom Değerlendirme</h2>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-        <p>
-            {{ form.fever.label }} {{ form.fever() }}
-        </p>
+            <div class="form-group">
+                {{ form.fever.label }}
+                {{ form.fever(class="checkbox") }}
+            </div>
 
-        <p>
-            {{ form.fever_temperature.label }}<br>
-            {{ form.fever_temperature() }}
-        </p>
+            <div class="form-group">
+                {{ form.fever_temperature.label }}
+                {{ form.fever_temperature(class="input") }}
+                {% if form.fever_temperature.errors %}
+                    {% for error in form.fever_temperature.errors %}
+                        <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
-        <p>
-            {{ form.description.label }}<br>
-            {{ form.description(rows=3) }}
-        </p>
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(class="textarea") }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
-        <p>{{ form.submit() }}</p>
-    </form>
+            {{ form.submit(class="submit-btn") }}
+        </form>
 
-    <p><a href="{{ url_for('patient.dashboard') }}">← Geri Dön</a></p>
+        <a href="{{ url_for('patient.dashboard') }}" class="back-link">← Geri Dön</a>
+    </div>
 </body>
 </html>
